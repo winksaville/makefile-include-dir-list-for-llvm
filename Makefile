@@ -18,15 +18,15 @@ $(warning llvm.include_file_names="$(llvm.include_file_names)")
 ## iterate over strings with spaces, see: https://stackoverflow.com/questions/9084257/bash-array-with-spaces-in-elements
 n=Hello World Questions Answers "bash shell" script
 #iterate := for i in d "e" "f h"; do echo item=$$i; done
-#iterate := for i in $n; do echo item=$$i; done
-iterate := ary=($n); IFS=''; for i in $${ary[@]}; do echo item=$$i; done # IFS='' needed else "bash shell" is two items
+iterate := for i in $n; do echo item=$$i; done # Simplest
+#iterate := ary=($n); IFS=''; for i in $${ary[@]}; do echo item=$$i; done # IFS='' needed else "bash shell" is two items
 $(warning iterate=$(iterate))
 result_iterate := $(shell $(iterate))
 $(warning result_iterate=$(result_iterate))
 
 # These work: Examples of using shell and capturing output with "looping"
 #result := $(shell echo | for i in `seq 1 4`; do echo item: $$i; done)
-result := $(shell echo "hi" ; echo "bye")
+#result := $(shell echo "hi" ; echo "bye")
 #result := $(shell for i in `seq 1 4`; do echo item: $$i; done)
 #result := $(shell ary=(a b c) ; echo $${ary[0]}; echo $${ary[1]})
 #result := $(shell ary=(a b c) ; for i in $${ary[@]}; do echo $$i; done)
@@ -34,7 +34,7 @@ result := $(shell echo "hi" ; echo "bye")
 #result := $(shell ary=("a b c") ; for i in "$${ary[@]}"; do echo $$i ; done)
 #result := $(shell ary=("a b c") ; for i in $${ary[@]}; do echo "item: $$i"; done)
 #result := $(shell ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
-#result := $(shell ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo "item: $$i"; done)
+result := $(shell for i in $(llvm.include_file_names); do echo item: $$i; done) # Simplest
 
 #Why adding "echo |" do things fail but the "simple" examples above don't?
 #result := $(shell echo | declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
