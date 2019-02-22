@@ -42,12 +42,12 @@ $(warning result_iterate=$(result_iterate))
 #result := $(shell echo | ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
 
 # Using loopit variable for code
-loopit := for i in $(llvm.include_file_names); do echo item: $$i; done
-#loopit :=					\
-#      	for i in $(llvm.include_file_names);	\
-#	do					\
-#		echo item: $$i;			\
-#	done
+#loopit := for i in $(llvm.include_file_names); do echo item: $$i; done
+loopit :=					\
+	for i in $(llvm.include_file_names);	\
+	do					\
+		echo item: $$i;			\
+	done
 result := $(shell $(loopit))
 
 
