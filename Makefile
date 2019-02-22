@@ -28,11 +28,18 @@ $(warning llvm.include_file_names="$(llvm.include_file_names)")
 #These work
 #result := $(shell echo | echo "hi" ; echo "bye")
 #result := $(shell echo | for i in `seq 1 4`; do echo item: $$i; done)
+result := $(shell echo "hi" ; echo "bye")
 #result := $(shell for i in `seq 1 4`; do echo item: $$i; done)
-#result := $(shell declare -a ary=(a b c) ; echo $${ary[0]}; echo $${ary[1]})
-#result := $(shell declare -a ary=("a b c") ; for i in $${ary[@]}; do echo "item: $$i"; done)
-#result := $(shell declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
-#result := $(shell declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo "item: $$i"; done)
+#result := $(shell ary=(a b c) ; echo $${ary[0]}; echo $${ary[1]})
+#result := $(shell ary=(a b c) ; for i in $${ary[@]}; do echo $$i; done)
+#result := $(shell ary=(a b c) ; for i in "$${ary[@]}"; do echo $$i ; done)
+#result := $(shell ary=("a b c") ; for i in "$${ary[@]}"; do echo $$i ; done)
+#result := $(shell ary=("a b c") ; for i in $${ary[@]}; do echo "item: $$i"; done)
+#result := $(shell ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
+#result := $(shell ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo "item: $$i"; done)
+
+#Why adding "echo |" do things fail but the "simple" examples above don't?
+#result := $(shell echo | declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
 
 #loopit := declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo "item: $$i"; done
 #result := $(shell $(loopit))
@@ -56,12 +63,8 @@ search_paths= $(shell echo "${quoted}" | $(get_search_paths))
 $(warning search_paths=$(search_paths))
 
 #These don't work
-#result := $(shell echo | declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
-#result := $(shell echo | declare -a ary=(a b c) ; echo "$${ary[0]}"; echo "$${ary[1]}")
-#result := $(shell echo | declare -a ary=(a b c) ; for i in $${ary[@]}; do echo $$i; done)
-#result := $(shell echo | ary=(a b c) ; for i in "$${ary[@]}"; do echo $$i ; done)
 
-#$(warning result=$(result))
+$(warning result=$(result))
 
 #llvm.include.dir := $(CROSS_SYSROOT)$(shell $(LLVM_CONFIG) --includedir $(LLVM_LINK_STATIC))
 #include.paths := $(shell echo | $(CC) -v -E - 2>&1)
