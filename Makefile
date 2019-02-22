@@ -15,18 +15,16 @@ llvm.get_include_file_names := "echo '$(test_string)' | grep -oE -- '(^| )-I\s*\
 llvm.include_file_names := $(shell sh -c $(llvm.get_include_file_names))
 $(warning llvm.include_file_names="$(llvm.include_file_names)")
 
-## iterate the include_file_names individually
-#n="a,b,c"
-##iterate := IFS=',' ; for i in `echo $n`; do echo $f; done
-#iterate := IFS=',' ;for i in `echo "Hello,World,Questions,Answers,bash shell,script"`; do echo $i; done
-#iterate := declare -a ary=($$(llvm.include_file_names)) ; for i in $${ary[@]}; do echo $$i; done
-#iterate := 'declare -a ary=("a b c") ; for i in ${ary[@]}; do echo $i; done'
-#$(warning iterate=$(iterate))
-#result := $(shell sh -c $(iterate))
-#result := $(shell echo | $(iterate))
+## iterate over strings with spaces, see: https://stackoverflow.com/questions/9084257/bash-array-with-spaces-in-elements
+n=Hello World Questions Answers "bash shell" script
+#iterate := for i in d "e" "f h"; do echo item=$$i; done
+#iterate := for i in $n; do echo item=$$i; done
+iterate := ary=($n); IFS=''; for i in $${ary[@]}; do echo item=$$i; done # IFS='' needed else "bash shell" is two items
+$(warning iterate=$(iterate))
+result_iterate := $(shell $(iterate))
+$(warning result_iterate=$(result_iterate))
 
-#These work
-#result := $(shell echo | echo "hi" ; echo "bye")
+# These work: Examples of using shell and capturing output with "looping"
 #result := $(shell echo | for i in `seq 1 4`; do echo item: $$i; done)
 result := $(shell echo "hi" ; echo "bye")
 #result := $(shell for i in `seq 1 4`; do echo item: $$i; done)
