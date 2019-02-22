@@ -7,7 +7,7 @@ llvm.get_cflags := $(LLVM_CONFIG) --cflags $(LLVM_LINK_STATIC)
 llvm.cflags := $(shell sh -c "$(llvm.get_cflags)")
 #$(warning llvm.cflags="$(llvm.cflags)")
 
-# test_string has two -I
+# test_string has four -I
 test_string := -I/usr/include -march=x86-64  -I  /sec/time   -I   /3/4 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -fPIC -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wno-missing-field-initializers -pedantic -Wno-long-long -Wno-comment -fdiagnostics-color -ffunction-sections -fdata-sections -O3 -DNDEBUG -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/xyz/abc  
 #test_string := $(llvm.cflags)
 llvm.get_include_file_names := "echo '$(test_string)' | grep -oE -- '(^| )-I\s*\S+' | sed 's/^\s*-I\s*//'"
@@ -41,18 +41,6 @@ $(warning result_iterate=$(result_iterate))
 #Note: This doesn't work result is empty, maybe because there are mutliple statements "ary=.." and "for i in ..."
 #result := $(shell echo | ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
 
-# Using loopit variable for code
-#loopit := for i in $(llvm.include_file_names); do echo item: $$i; done
-loopit :=					\
-	for i in $(llvm.include_file_names);	\
-	do					\
-		echo item: $$i;			\
-	done
-result := $(shell $(loopit))
-
-
-#Testing
-
 raw_search_paths= $(shell echo | $(CC) -v -E - 2>&1)
 quoteDblQuote= $(subst ",\",${raw_search_paths})
 quoted= $(subst \#,\\\#,${quoteDblQuote})
@@ -61,6 +49,15 @@ search_paths= $(shell echo "${quoted}" | $(get_search_paths))
 $(warning search_paths=$(search_paths))
 
 $(warning result=$(result))
+
+# Using loopit variable for code
+#loopit := for i in $(llvm.include_file_names); do echo item: $$i; done
+loopit :=					\
+	for i in $(llvm.include_file_names);	\
+	do					\
+		echo item: $$i;			\
+	done
+result := $(shell $(loopit))
 
 #llvm.include.dir := $(CROSS_SYSROOT)$(shell $(LLVM_CONFIG) --includedir $(LLVM_LINK_STATIC))
 #include.paths := $(shell echo | $(CC) -v -E - 2>&1)
