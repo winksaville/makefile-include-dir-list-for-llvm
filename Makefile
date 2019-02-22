@@ -60,8 +60,6 @@ get_search_paths= sed 's/\(.*\)search starts here:\(.*\)End of search list.\(.*\
 search_paths= $(shell echo "${quoted}" | $(get_search_paths))
 $(warning search_paths=$(search_paths))
 
-#These don't work
-
 $(warning result=$(result))
 
 #llvm.include.dir := $(CROSS_SYSROOT)$(shell $(LLVM_CONFIG) --includedir $(LLVM_LINK_STATIC))
