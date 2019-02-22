@@ -34,23 +34,21 @@ $(warning result_iterate=$(result_iterate))
 #result := $(shell ary=("a b c") ; for i in "$${ary[@]}"; do echo $$i ; done)
 #result := $(shell ary=("a b c") ; for i in $${ary[@]}; do echo "item: $$i"; done)
 #result := $(shell ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
-result := $(shell for i in $(llvm.include_file_names); do echo item: $$i; done) # Simplest
+#result := $(shell for i in $(llvm.include_file_names); do echo item: $$i; done) # Simplest
 
 #Note: This does work, maybe becuase the "for" is a single statement?
 #result := $(shell echo | for i in $(llvm.include_file_names); do echo item: $$i; done) # Simplest
 #Note: This doesn't work result is empty, maybe because there are mutliple statements "ary=.." and "for i in ..."
 #result := $(shell echo | ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
 
-#loopit := declare -a ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo "item: $$i"; done
-#result := $(shell $(loopit))
-
-#loopit :=						\
-#	declare -a ary=($(llvm.include_file_names));	\
-#       	for i in $${ary[@]};				\
-#	do						\
-#		echo "item: $$i";			\
+# Using loopit variable for code
+loopit := for i in $(llvm.include_file_names); do echo item: $$i; done
+#loopit :=					\
+#      	for i in $(llvm.include_file_names);	\
+#	do					\
+#		echo item: $$i;			\
 #	done
-#result := $(shell $(loopit))
+result := $(shell $(loopit))
 
 
 #Testing
