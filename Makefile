@@ -7,10 +7,9 @@ llvm.get_cflags := $(LLVM_CONFIG) --cflags $(LLVM_LINK_STATIC)
 llvm.cflags := $(shell sh -c "$(llvm.get_cflags)")
 #$(warning llvm.cflags="$(llvm.cflags)")
 
-# test_string has four -I
-test_string := -I/usr/include -march=x86-64  -I  /sec/time   -I   /3/4 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -fPIC -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wno-missing-field-initializers -pedantic -Wno-long-long -Wno-comment -fdiagnostics-color -ffunction-sections -fdata-sections -O3 -DNDEBUG -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/xyz/abc  
-#test_string := $(llvm.cflags)
-llvm.get_include_dirs := "echo '$(test_string)' | grep -oE -- '(^| )-I\s*\S+' | sed 's/^\s*-I\s*//'"
+# For testing have more than one -I
+llvm.cflags := -I/usr/include -march=x86-64  -I  /sec/time   -I   /3/4 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -fPIC -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wno-missing-field-initializers -pedantic -Wno-long-long -Wno-comment -fdiagnostics-color -ffunction-sections -fdata-sections -O3 -DNDEBUG -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/xyz/abc  
+llvm.get_include_dirs := "echo '$(llvm.cflags)' | grep -oE -- '(^| )-I\s*\S+' | sed 's/^\s*-I\s*//'"
 #$(warning llvm.get_include_dirs=$(llvm.get_include_dirs))
 llvm.include_dirs := $(shell sh -c $(llvm.get_include_dirs))
 $(warning llvm.include_dirs="$(llvm.include_dirs)")
