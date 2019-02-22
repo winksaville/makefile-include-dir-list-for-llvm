@@ -50,7 +50,7 @@ $(warning llvm.include_file_names="$(llvm.include_file_names)")
 
 raw= $(shell echo | $(CC) -v -E - 2>&1)
 #$(warning raw=${raw})
-quoted= $(subst ",\",${raw})
+quoteDblQuote= $(subst ",\",${raw})
 hash=#
 $(warning hash=$(hash))
 sglhash=\#
@@ -63,14 +63,14 @@ quadhash=\\\\#
 $(warning quadhash=$(quadhash))
 fivehash=\\\\\#
 $(warning fivehash=$(fivehash))
-quotedX= $(subst $(sglhash),$(trihash),${quoted})
-$(warning quotedX=${quotedX})
+quoted= $(subst $(sglhash),$(trihash),${quoteDblQuote})
+$(warning quoted=${quoted})
 sxx= sed 's/\(.*\)search starts here:\(.*\)End of search list.\(.*\)/\2/'
 $(warning sxx=$(sxx))
 ###search_paths= $(shell echo "Using built-in specs. COLLECT_GCC=cc Target: x86_64-pc-linux-gnu Configured with: /build/gcc/src/gcc/configure  search starts here: /abc/a /usr/include /usr/local/include End of search list. other" | $(sxx))
 ###search_paths= $(shell echo "search starts here:  /usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include  /usr/local/include  /usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed  /usr/include End of search list. \# 1 \"<stdin>\" ") # 1 \"<built-in>\" # 1 \"<command-line>\" # 31 \"<command-line>\" # 1 \"/usr/include/stdc-predef.h\" 1 3 4 # 32 \"<command-line>\" 2 # 1 \"<stdin>\" COMPILER_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/:/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/ LIBRARY_PATH=/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/:/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/../../../../lib/:/lib/../lib/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/../../../:/lib/:/usr/lib/ COLLECT_GCC_OPTIONS='-v' '-E' '-mtune=generic' '-march=x86-64'")
 ###search_paths= $(shell echo "search starts here:  /usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include  /usr/local/include  /usr/lib/gcc/x86_64-pc-linux-gnu/8.2.1/include-fixed  /usr/include End of search list.")
-search_paths= $(shell echo "${quotedX}" | $(sxx))
+search_paths= $(shell echo "${quoted}" | $(sxx))
 $(warning search_paths=$(search_paths))
 
 #These don't work
