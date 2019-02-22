@@ -10,10 +10,10 @@ llvm.cflags := $(shell sh -c "$(llvm.get_cflags)")
 # test_string has four -I
 test_string := -I/usr/include -march=x86-64  -I  /sec/time   -I   /3/4 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -fPIC -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wno-missing-field-initializers -pedantic -Wno-long-long -Wno-comment -fdiagnostics-color -ffunction-sections -fdata-sections -O3 -DNDEBUG -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/xyz/abc  
 #test_string := $(llvm.cflags)
-llvm.get_include_file_names := "echo '$(test_string)' | grep -oE -- '(^| )-I\s*\S+' | sed 's/^\s*-I\s*//'"
-#$(warning llvm.get_include_file_names=$(llvm.get_include_file_names))
-llvm.include_file_names := $(shell sh -c $(llvm.get_include_file_names))
-$(warning llvm.include_file_names="$(llvm.include_file_names)")
+llvm.get_include_dirs := "echo '$(test_string)' | grep -oE -- '(^| )-I\s*\S+' | sed 's/^\s*-I\s*//'"
+#$(warning llvm.get_include_dirs=$(llvm.get_include_dirs))
+llvm.include_dirs := $(shell sh -c $(llvm.get_include_dirs))
+$(warning llvm.include_dirs="$(llvm.include_dirs)")
 
 ## iterate over strings with spaces, see: https://stackoverflow.com/questions/9084257/bash-array-with-spaces-in-elements
 n=Hello World Questions Answers "bash shell" script
@@ -33,13 +33,15 @@ $(warning result_iterate=$(result_iterate))
 #result := $(shell ary=(a b c) ; for i in "$${ary[@]}"; do echo $$i ; done)
 #result := $(shell ary=("a b c") ; for i in "$${ary[@]}"; do echo $$i ; done)
 #result := $(shell ary=("a b c") ; for i in $${ary[@]}; do echo "item: $$i"; done)
-#result := $(shell ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
-#result := $(shell for i in $(llvm.include_file_names); do echo item: $$i; done) # Simplest
+#result := $(shell ary=($(llvm.include_dirs)) ; for i in $${ary[@]}; do echo item: $$i; done)
+#result := $(shell for i in $(llvm.include_dirs); do echo item: $$i; done) # Simplest
 
 #Note: This does work, maybe becuase the "for" is a single statement?
-#result := $(shell echo | for i in $(llvm.include_file_names); do echo item: $$i; done) # Simplest
+#result := $(shell echo | for i in $(llvm.include_dirs); do echo item: $$i; done) # Simplest
 #Note: This doesn't work result is empty, maybe because there are mutliple statements "ary=.." and "for i in ..."
-#result := $(shell echo | ary=($(llvm.include_file_names)) ; for i in $${ary[@]}; do echo item: $$i; done)
+#result := $(shell echo | ary=($(llvm.include_dirs)) ; for i in $${ary[@]}; do echo item: $$i; done)
+
+$(warning result=$(result))
 
 raw_search_paths= $(shell echo | $(CC) -v -E - 2>&1)
 quoteDblQuote= $(subst ",\",${raw_search_paths})
@@ -48,16 +50,16 @@ get_search_paths= sed 's/\(.*\)search starts here:\(.*\)End of search list.\(.*\
 search_paths= $(shell echo "${quoted}" | $(get_search_paths))
 $(warning search_paths=$(search_paths))
 
-$(warning result=$(result))
-
 # Using loopit variable for code
-#loopit := for i in $(llvm.include_file_names); do echo item: $$i; done
-loopit :=					\
-	for i in $(llvm.include_file_names);	\
-	do					\
-		echo item: $$i;			\
+#loopit := for i in $(llvm.include_dirs); do echo item: $$i; done
+llvm.include =
+loopit :=								\
+	for inc_dir in $(llvm.include_dirs);				\
+	do								\
+		echo -isystem $$inc_dir;				\
 	done
-result := $(shell $(loopit))
+llvm.include = $(shell $(loopit))
+$(warning llvm.include=$(llvm.include))
 
 #llvm.include.dir := $(CROSS_SYSROOT)$(shell $(LLVM_CONFIG) --includedir $(LLVM_LINK_STATIC))
 #include.paths := $(shell echo | $(CC) -v -E - 2>&1)
