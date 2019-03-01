@@ -12,8 +12,11 @@ llvm.cflags := $(shell sh -c "$(llvm.get_cflags)")
 llvm.cflags := -isystem/usr/include -march=x86-64  -I  /sec/time -I   /3/4 -mtune=generic -O2 -pipe -fstack-protector-strong -fno-plt -fPIC -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wno-missing-field-initializers -pedantic -Wno-long-long -Wno-comment -fdiagnostics-color -ffunction-sections -fdata-sections -O3 -DNDEBUG -isystem/usr/local/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/xyz/abc
 $(warning llvm.cflags="$(llvm.cflags)")
 
-# Get include dirs using grep & sed to extract "-I x/xx" entries
-llvm.get_include_dirs := echo '$(llvm.cflags)' | grep -oE -- '(^-I\s*| -I\s*|^-isystem\s*| -isystem\s*)\S+' | sed -E 's/^\s*(-I\s*|-isystem\s*)//'
+# Get include dirs using grep & sed to extract "-I<dir>" and "-isystem<dir>" entries
+# that can occur anywhere in the string and <dir> may have a leading spaces, but the
+# regex assumes a directory does NOT contain spaces.
+# Note: [:space:] is used for greater portability.
+llvm.get_include_dirs := echo '$(llvm.cflags)' | grep -oE -- '(^-I[[:space:]]*| -I[[:space:]]*|^-isystem[[:space:]]*| -isystem[[:space:]]*)[^[:space:]]+' | sed -E 's/^[[:space:]]*(-I[[:space:]]*|-isystem[[:space:]]*)//'
 $(warning llvm.get_include_dirs="$(llvm.get_include_dirs)")
 llvm.include_dirs := $(shell sh -c "$(llvm.get_include_dirs)")
 $(warning llvm.include_dirs="$(llvm.include_dirs)")
